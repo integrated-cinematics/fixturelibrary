@@ -7,10 +7,12 @@
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "test": "npm run lint && npm run build",
     "lint": "eslint . -c ./package.json",
     "docs": "typedoc --excludeInternal --out docs src/index.ts"
   },
+  "files": ["dist"],
   "keywords": [
     "ofl",
     "dmx",
