@@ -1,5 +1,5 @@
 {
-  "name": "@directctrl/fixturelibrary",
+  "name": "@show-runner/fixturelibrary",
   "version": "2.0.1",
   "openFixtureLibraryVersion": "12.3.0",
   "description": "Utility library making it easy to work with the open-fixture-library.",
@@ -23,7 +23,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tteltrab/fixturelibrary.git"
+    "url": "git+https://github.com/integrated-cinematics/fixturelibrary.git"
   },
   "homepage": "https://jonahkr.github.io/fixturelibrary/index.html",
   "bin": {
