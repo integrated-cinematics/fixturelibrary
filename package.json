@@ -6,8 +6,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "prepare": "tsc",
+    "build": "tsc && node dist/src/syncOfl.js",
     "test": "npm run lint && npm run build",
     "lint": "eslint . -c ./package.json",
     "docs": "typedoc --excludeInternal --out docs src/index.ts"

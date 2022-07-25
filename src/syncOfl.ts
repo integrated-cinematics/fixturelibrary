@@ -2,8 +2,9 @@
 /* eslint-disable no-console */
 /* eslint-disable consistent-return */
 
-const fetch = require('node-fetch');
-const { FixtureLibrary } = require('../dist/src/fixturelibrary');
+import fetch from 'node-fetch';
+
+import { FixtureLibrary } from './fixturelibrary';
 
 // If all files should be downloaded
 let deepSync = true;

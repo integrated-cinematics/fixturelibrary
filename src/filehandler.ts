@@ -1,21 +1,21 @@
 import {
   outputJSON, pathExists, readJSON,
 } from 'fs-extra';
-
+import path from 'node:path';
 import { ItemExistanceError } from './fixtureindex';
 
-export const storageDirectory = './.fixturelibrary';
+export const storageDirectory = path.resolve(__dirname, '../.fixturelibrary');
 
 export async function readJsonFile(filename: string): Promise<any> {
   // Preparing path
-  let path = `${storageDirectory}/${filename}`;
-  if (!filename.endsWith('.json')) path += '.json';
+  let filePath = `${storageDirectory}/${filename}`;
+  if (!filename.endsWith('.json')) filePath += '.json';
   // Checking if file exists
-  if (!await pathExists(path)) {
-    throw new ItemExistanceError(`${path} doesn't exist!`);
+  if (!await pathExists(filePath)) {
+    throw new ItemExistanceError(`${filePath} doesn't exist!`);
   }
   try {
-    return await readJSON(path);
+    return await readJSON(filePath);
   } catch (err) {
     console.error(err);
   }
@@ -24,15 +24,15 @@ export async function readJsonFile(filename: string): Promise<any> {
 
 export async function writeJsonFile(name: string, data: {} | [], override = false):
 Promise<boolean> {
-  // Preparing path
-  let path = `${storageDirectory}/${name}`;
-  if (!path.endsWith('.json')) path += '.json';
+  // Preparing filePath
+  let filePath = `${storageDirectory}/${name}`;
+  if (!filePath.endsWith('.json')) filePath += '.json';
   // Checking if file already exists
-  if (!override && await pathExists(path)) {
+  if (!override && await pathExists(filePath)) {
     throw new ItemExistanceError(`This file at ${path} already exist!`);
   }
   try {
-    await outputJSON(path, data);
+    outputJSON(filePath, data);
   } catch (err) {
     console.error(err);
     return false;
