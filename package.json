@@ -1,5 +1,5 @@
 {
-  "name": "fixturelibrary",
+  "name": "@directctrl/fixturelibrary",
   "version": "2.0.0",
   "openFixtureLibraryVersion": "12.3.0",
   "description": "Utility library making it easy to work with the open-fixture-library.",
