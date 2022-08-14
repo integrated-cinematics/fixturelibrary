@@ -49,7 +49,7 @@ export async function request(url: string): Promise<object | void> {
 }
 
 async function githubRepositoryRequest(endpoint: string): Promise<object | any[] | void> {
-  const url = `https://api.github.com/repos/OpenLightingProject/open-fixture-library/${endpoint}`;
+  const url = `https://api.github.com/repos/integrated-cinematics/open-fixture-library/${endpoint}`;
   return request(url);
 }
 

@@ -23,7 +23,7 @@ async function bundle() {
   const parser = new $RefParser();
   let bundle = await parser.bundle(path);
 
-  // We need to remove the $id tags aswell to prevent
+  // We need to remove the $id tags as well to prevent
   bundle = removeId(bundle);
 
   await writeJson('../src/ofl-schema/ofl-fixture.json', bundle);
