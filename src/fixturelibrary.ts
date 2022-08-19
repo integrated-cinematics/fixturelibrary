@@ -9,7 +9,7 @@ import {
 import { Fixture } from './types';
 
 import * as schema from './ofl-schema/ofl-fixture.json';
-import { readJsonFile, storageDirectory, writeJsonFile } from './filehandler';
+import fileHandler from './filehandler';
 
 /**
  * The Fixture Library
@@ -66,9 +66,9 @@ export class FixtureLibrary {
     // Loading the index file
     // Trying to recreate index from savefile: index.json
     // Improvements: Async or filestreams?
-    if (pathExistsSync(`${storageDirectory}/index.json`)) {
+    if (pathExistsSync(fileHandler.indexPath)) {
       try {
-        this.fixtureIndex.setIndex(readJSONSync(`${storageDirectory}/index.json`));
+        this.fixtureIndex.setIndex(readJSONSync(fileHandler.indexPath));
       } catch (error) {
         console.error(error);
       }
@@ -88,7 +88,7 @@ export class FixtureLibrary {
    * Saving the Index to a file to be available after execution.
    */
   private async saveIndex(): Promise<void> {
-    writeJsonFile('index.json', this.fixtureIndex.getIndex(), true);
+    await fileHandler.writeJson('index.json', this.fixtureIndex.getIndex(), true);
   }
 
   /**
@@ -107,7 +107,7 @@ export class FixtureLibrary {
     if (fixture) return fixture;
     const item = await this.fixtureIndex.getIndexItem(key);
     if (item?.path) {
-      fixture = await readJsonFile(item.path);
+      fixture = await fileHandler.readJson(item.path);
       if (fixture) this.fixtureIndex.cacheFixture(key, fixture);
 
     // If we find a url in the index we download the fixture
@@ -142,7 +142,7 @@ export class FixtureLibrary {
     if (this.fixtureIndex.hasIndexItem(key) && !override) return undefined;
     if (validate && !this.validate(fixture)) return undefined;
     // If the key is new and the definition is valid, we save it to file
-    await writeJsonFile(key, fixture, override);
+    await fileHandler.writeJson(key, fixture, override);
     this.fixtureIndex.setIndexItem(key, { path: key, sha });
     this.fixtureIndex.cacheFixture(key, fixture);
     await this.saveIndex();
@@ -174,7 +174,7 @@ export class FixtureLibrary {
 
     const updatedFixtures: string[] = [];
 
-    ofl?.forEach(async (fixture) => {
+    await Promise.all((ofl ?? []).map(async (fixture) => {
       if (fixture.path !== 'manufacturers.json') {
         // Removing the .json from the end of the file
         const key = fixture.path.slice(0, -5);
@@ -185,7 +185,7 @@ export class FixtureLibrary {
           updatedFixtures.push(key);
         }
       }
-    });
+    }));
     await this.saveIndex();
     return updatedFixtures;
   }
@@ -205,7 +205,7 @@ export class FixtureLibrary {
 
     const updatedFixtures: string[] = [];
 
-    ofl?.forEach(async (fixture) => {
+    await Promise.all((ofl ?? []).map(async (fixture) => {
       if (fixture.path !== 'manufacturers.json') {
         // Removing the .json from the end of the file
         const key = fixture.path.slice(0, -5);
@@ -218,7 +218,7 @@ export class FixtureLibrary {
           await this.setFixture(key, file, fixture.sha, false, true);
         }
       }
-    });
+    }));
     await this.saveIndex();
     return updatedFixtures;
   }
