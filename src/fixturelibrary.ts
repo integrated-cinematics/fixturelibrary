@@ -170,11 +170,11 @@ export class FixtureLibrary {
    */
   public async fetchOfl(): Promise<string[] | void> {
     if (!this.webAccess) return console.error('Web Access is disabled');
-    const ofl = await fetchOflFixtureDirectory();
 
+    const ofl = await fetchOflFixtureDirectory() ?? [];
     const updatedFixtures: string[] = [];
 
-    await Promise.all((ofl ?? []).map(async (fixture) => {
+    await Promise.all((ofl).map(async (fixture) => {
       if (fixture.path !== 'manufacturers.json') {
         // Removing the .json from the end of the file
         const key = fixture.path.slice(0, -5);
@@ -186,7 +186,9 @@ export class FixtureLibrary {
         }
       }
     }));
+
     await this.saveIndex();
+
     return updatedFixtures;
   }
 
