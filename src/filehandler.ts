@@ -4,38 +4,48 @@ import {
 import path from 'node:path';
 import { ItemExistanceError } from './fixtureindex';
 
-export const storageDirectory = path.resolve(__dirname, '../.fixturelibrary');
+class FileHandler {
+  // eslint-disable-next-line class-methods-use-this
+  public get storageDirectory() {
+    return process.env.OFL_INDEX ?? path.resolve(__dirname, '../.fixturelibrary');
+  }
 
-export async function readJsonFile(filename: string): Promise<any> {
-  // Preparing path
-  let filePath = `${storageDirectory}/${filename}`;
-  if (!filename.endsWith('.json')) filePath += '.json';
-  // Checking if file exists
-  if (!await pathExists(filePath)) {
-    throw new ItemExistanceError(`${filePath} doesn't exist!`);
+  public get indexPath() {
+    return `${this.storageDirectory}/index.json`;
   }
-  try {
-    return await readJSON(filePath);
-  } catch (err) {
-    console.error(err);
+
+  async readJson(filename: string): Promise<any> {
+    // Preparing path
+    let filePath = `${this.storageDirectory}/${filename}`;
+    if (!filename.endsWith('.json')) filePath += '.json';
+    // Checking if file exists
+    if (!await pathExists(filePath)) {
+      throw new ItemExistanceError(`${filePath} doesn't exist!`);
+    }
+    try {
+      return await readJSON(filePath);
+    } catch (err) {
+      console.error(err);
+    }
+    return undefined;
   }
-  return undefined;
+
+  async writeJson(name: string, data: {} | [], override = false): Promise<boolean> {
+    // Preparing filePath
+    let filePath = `${this.storageDirectory}/${name}`;
+    if (!filePath.endsWith('.json')) filePath += '.json';
+    // Checking if file already exists
+    if (!override && await pathExists(filePath)) {
+      throw new ItemExistanceError(`This file at ${path} already exist!`);
+    }
+    try {
+      outputJSON(filePath, data);
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+    return true;
+  }
 }
 
-export async function writeJsonFile(name: string, data: {} | [], override = false):
-Promise<boolean> {
-  // Preparing filePath
-  let filePath = `${storageDirectory}/${name}`;
-  if (!filePath.endsWith('.json')) filePath += '.json';
-  // Checking if file already exists
-  if (!override && await pathExists(filePath)) {
-    throw new ItemExistanceError(`This file at ${path} already exist!`);
-  }
-  try {
-    outputJSON(filePath, data);
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-  return true;
-}
+export default new FileHandler();
