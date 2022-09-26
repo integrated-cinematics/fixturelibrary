@@ -127,6 +127,11 @@ export class FixtureLibrary {
     return fixture;
   }
 
+  public async getIndex(): Promise<string[]> {
+    const items = await this.fixtureIndex.getIndex();
+    return Object.keys(items);
+  }
+
   /**
    * Adding a new fixture to the Library.
    * @param key new and unique fixture key
