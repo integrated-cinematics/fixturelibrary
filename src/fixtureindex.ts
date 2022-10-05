@@ -10,6 +10,8 @@ export interface IndexItem {
   path?: string
   sha?: string
   url?: string
+  make?: string
+  model?: string
 }
 
 /**

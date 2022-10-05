@@ -4,12 +4,19 @@ import addFormats from 'ajv-formats';
 import { pathExistsSync, readJSONSync } from 'fs-extra';
 import { FixtureIndex } from './fixtureindex';
 import {
-  fetchOflFixtureDirectory, githubRawFixtureRequest, request,
+  fetchOflFixtureDirectory, githubRawFixtureRequest, githubRawManufacturersRequest, request,
 } from './webhandler';
 import { Fixture } from './types';
 
 import * as schema from './ofl-schema/ofl-fixture.json';
 import fileHandler from './filehandler';
+import { Manufacturers } from './types/manufacturers';
+
+interface MakeModel {
+  key: string;
+  make: string;
+  model: string;
+}
 
 /**
  * The Fixture Library
@@ -56,6 +63,12 @@ export class FixtureLibrary {
    * Storing the Json Schema Validator object
    */
   private ajv: Ajv;
+
+  /**
+   * @internal
+   * Object for storing manufacturers at build time.
+   */
+  private manufacturers: Manufacturers = {};
 
   /**
    * @param webAccess if web requests are allowed
@@ -127,6 +140,25 @@ export class FixtureLibrary {
     return fixture;
   }
 
+  public getIndexItems(): MakeModel[] {
+    const index = this.fixtureIndex.getIndex();
+    const items = Object.keys(index);
+    return items.map((key) => {
+      const { make = '', model = '' } = index[key];
+      return {
+        key,
+        make,
+        model,
+      };
+    });
+  }
+
+  private getMake(path: string): string {
+    const makePath = path.split('/')?.[0]; // Gets make
+    const make = this.manufacturers[makePath];
+    return make ? make.name : '';
+  }
+
   /**
    * Adding a new fixture to the Library.
    * @param key new and unique fixture key
@@ -143,7 +175,13 @@ export class FixtureLibrary {
     if (validate && !this.validate(fixture)) return undefined;
     // If the key is new and the definition is valid, we save it to file
     await fileHandler.writeJson(key, fixture, override);
-    this.fixtureIndex.setIndexItem(key, { path: key, sha });
+    const make = this.getMake(key);
+    this.fixtureIndex.setIndexItem(key, {
+      path: key,
+      sha,
+      model: fixture.name,
+      make,
+    });
     this.fixtureIndex.cacheFixture(key, fixture);
     await this.saveIndex();
     return fixture;
@@ -206,6 +244,8 @@ export class FixtureLibrary {
     const ofl = await fetchOflFixtureDirectory();
 
     const updatedFixtures: string[] = [];
+
+    this.manufacturers = await githubRawManufacturersRequest() as Manufacturers;
 
     await Promise.all((ofl ?? []).map(async (fixture) => {
       if (fixture.path !== 'manufacturers.json') {

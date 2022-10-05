@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { Fixture } from './types';
 import { openFixtureLibraryVersion } from '../package.json';
+import { Manufacturers } from './types/manufacturers';
 
 interface GithubTag {
   name: string
@@ -80,6 +81,10 @@ export async function fetchLatestSupportedCommit(forceUpdate = false): Promise<s
 export async function githubRawFixtureRequest(path: string): Promise<object | void> {
   const url = `https://raw.githubusercontent.com/OpenLightingProject/open-fixture-library/${await fetchLatestSupportedCommit()}/fixtures/${path}`;
   return request(url);
+}
+
+export async function githubRawManufacturersRequest(): Promise<Manufacturers | void> {
+  return githubRawFixtureRequest('manufacturers.json') as Promise<Manufacturers | void>;
 }
 
 export class TruncatedDataError extends Error {
