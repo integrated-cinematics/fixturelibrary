@@ -1,6 +1,6 @@
 # FixtureLibrary JS / TS
 
-The JS/TS library for working with the [open-fixture-library](https://github.com/OpenLightingProject/open-fixture-library).
+The JS/TS library for working our fork of the [open-fixture-library](https://github.com/integrated-cinematics/open-fixture-library).
 
 The Documentation can be found [here](https://jonahkr.github.io/fixturelibrary)
 
