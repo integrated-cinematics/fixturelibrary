@@ -1,6 +1,6 @@
 {
   "name": "@show-runner/fixturelibrary",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "openFixtureLibraryVersion": "12.3.0",
   "description": "Utility library making it easy to work with the open-fixture-library.",
   "main": "dist/src/index.js",
